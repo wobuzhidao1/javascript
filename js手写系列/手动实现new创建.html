@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手写实现new创建</title>
+</head>
+<body>  
+  <script>
+  
+    /*
+		1、创建空对象
+		2、this指向新对象，执行构造函数的代码
+		3、设置原型链，将新对象的__proto__指向构造函数prototype对象
+		4、判断构造函数返回的类型是否是一个对象，如果是直接返回这个对象，如果不是返回我们新建的对象
+	*/
+	
+	// Test为需要创建对象的构造函数
+	function Test(name){
+		this.name = name;
+	}
+	
+	// 手动实现new，参数cons为构造函数
+	function myNew(cons){
+		var obj = new Object();	
+		var result = cons.apply(obj, ['test new']);		
+		obj.__proto__ = cons.prototype;		
+		return typeof result === 'object'?result:obj;
+	}
+
+	// 测试结果
+	console.log(myNew(Test));
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手动实现call和appaly和bind</title>
+</head>
+<body>  
+  <script>
+	/*
+		1、call其实就是函数
+		2、每个函数都是Function构造函数的实例，根据原型链的规则，我们可以把自定义的call函数定义在Function.prototype属性上
+		3、自定义call函数内部的this指向的是调用call函数的函数（函数本身也是对象实例）
+		4、调用call参数如果为空，改为默认为window对象
+	*/
+    function test(){
+		console.log(test instanceof Function)  //函数是Function的实例
+		console.log(this.name) 
+	}
+	
+	var obj = {name : '自定义call和apply'}
+	
+	/*
+		自定义call
+	*/
+	Function.prototype.myCall = function(ctx){
+		// 如果调用call没有指定需要绑定的对象，那么默认赋值为window
+		var ctx = ctx || window; 
+		
+		// 当前this实际是调用call的函数，下面func的作用是定义一个函数属性，方便接下来对象的调用，这里使用的是func，一般可以考虑使用symbol定义属性
+		ctx.func  =  this;
+		
+		//处理参数，使用Array.from将arguments对象转换成数组，然后使用slice截取数组
+		var args =  Array.from(arguments).slice(1);
+		
+		//根据参数不用进行不同的调用方式
+		const res  = args.length>0? ctx.func(...args) : ctx.func();
+		
+		//调用完之后，删除添加的属性
+		delete ctx.func;
+		
+		//最后将函数的执行结果返回
+		return res;
+	}
+	test.myCall(obj);
+ 
+	/*
+		自定义apply
+		实现方式上仅仅是参数的区别，apply接收的是数字
+	*/
+	Function.prototype.myApply = function(ctx){
+		ctx = ctx || window;
+		
+		ctx.func = this;
+		
+		var res = arguments[1] ? ctx.func(...arguments[1]) : ctx.func();
+		
+		return res;
+	}
+	test.myApply(obj);
+	
+	/*
+		自定义bind
+		利用闭包实现即可
+	*/
+	Function.prototype.mybind = function(ctx){
+		var that = this;
+		return function(){
+			that.apply(ctx, arguments)
+		}
+	}
+	var bindFunc = test.bind(obj);
+	bindFunc();
+  </script>
+</body>
+</html>
