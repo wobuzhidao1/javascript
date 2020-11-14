@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>异步加载</title>    
+</head>
+
+<body>
+
+  
+
+</body>
+/*
+    async异步加载，谁先加载完了就先执行谁，文档加载的先后顺序无关
+    这里将网络速度放慢，会让b.js最后执行，如果去掉async关键字，那么一定是按照文件顺序a.js/b.js/c.js执行
+*/
+<script type="text/javascript" async src="./a.js"></script>
+<script type="text/javascript" async src="./b.js"></script>
+<script type="text/javascript" async src="./c.js"></script>
+</html>
